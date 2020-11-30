@@ -45,14 +45,15 @@ class _AvatarWidgetState extends State<AvatarWidget> {
               },
               child: Container(
                 width: 40,
-                height: 40,
-                margin: EdgeInsets.all(8),
+                height: 30,
                 decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: AppColor.BLACK,
-                    ),
-                    borderRadius: BorderRadius.circular(25)),
+                  border: Border.all(
+                    width: 1,
+                    color: AppColor.BLACK,
+                  ),
+                  shape: BoxShape.circle,
+                  //borderRadius: BorderRadius.circular(25),
+                ),
                 child: ClipOval(
                   child: AppCachedNetworkImage(
                     imageURL: widget.imageURL,
