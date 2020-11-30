@@ -1,8 +1,13 @@
-import '../../models/model.dart';
-import '../../models/user.dart';
-import '../../services/auth/auth_service.dart';
+import '../../services/storage/avatar_storage_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../models/community.dart';
+import '../../models/facility.dart';
+import '../../models/model.dart';
+import '../../services/auth/auth_service.dart';
+import '../../services/db/community_service.dart';
+import '../../services/db/facility_service.dart';
+import '../../models/user.dart';
 
 class FormUtility {
   static final int _minPasswordLength = 6;
@@ -74,6 +79,7 @@ class FormUtility {
           final String response = await _authService.loginWithEmailAndPassword(
             user: user,
           );
+          print('hsdbhjds');
           return response;
         //break;
         case 'Signup':
@@ -82,7 +88,52 @@ class FormUtility {
             user: user,
           );
           return null;
-        
+        case 'Add Community':
+          Community community = model;
+          CommunityService _communityService = CommunityService(
+            uid: null,
+          );
+          await _communityService.addCommunity(community);
+          return null;
+        case 'Add Facility':
+          Facility facility = model;
+          if (facility.file == null) {
+            return null;
+          }
+          FacilityService _facilityService = FacilityService(
+            uid: null,
+          );
+          AvatarStorageService serv = AvatarStorageService(
+            uid: null,
+          );
+          final String imageURL = await serv.uploadFacility(
+            file: facility.file,
+            key: facility.title,
+          );
+          facility.imageURL = imageURL;
+          await _facilityService.addFacility(facility);
+          break;
+        case 'Edit Facility':
+          Facility facility = model;
+          if (facility.file == null && facility.imageURL == null) {
+            return null;
+          }
+          FacilityService _facilityService = FacilityService(
+            uid: null,
+          );
+          AvatarStorageService serv = AvatarStorageService(
+            uid: null,
+          );
+          if (facility.file != null) {
+            final String imageURL = await serv.uploadFacility(
+              file: facility.file,
+              key: facility.title,
+            );
+            facility.imageURL = imageURL;
+          }
+
+          await _facilityService.updateFacility(facility);
+          break;
         default:
           return null;
       }

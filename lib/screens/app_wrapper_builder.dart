@@ -1,3 +1,6 @@
+import '../services/db/community_service.dart';
+import '../services/db/facility_service.dart';
+
 import '../services/auth/auth_service.dart';
 import '../services/db/user_service.dart';
 import '../services/storage/avatar_service.dart';
@@ -31,8 +34,12 @@ class AppWrapperBuilder extends StatelessWidget {
               Provider<AvatarStorageService>(
                 create: (_) => AvatarStorageService(uid: user.uid),
               ),
-              
-              
+              Provider<CommunityService>(
+                create: (_) => CommunityService(uid: user.uid),
+              ),
+              Provider<FacilityService>(
+                create: (_) => FacilityService(uid: user.uid),
+              ),
             ],
             child: builder(context, snapshot),
           );

@@ -1,6 +1,11 @@
-import '../../models/user.dart';
+import 'package:allihoop/models/facility.dart';
+import 'package:allihoop/models/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'admin/add_community.dart';
+import 'admin/add_facility.dart';
+import 'admin/admin_dashboard.dart';
 
 class AdminHome extends StatefulWidget {
   final User user;
@@ -16,13 +21,12 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
-  //Facility _facility;
+  Facility _facility;
 
   @override
   void initState() {
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,7 +34,46 @@ class _AdminHomeState extends State<AdminHome> {
         left: 15,
         right: 15,
       ),
-      child: Center(child: Text('Admin Home')),
+      child: Center(child: _resolveAdminHome(context)),
     );
+  }
+
+  Widget _resolveAdminHome(BuildContext context) {
+    switch (widget.currentIndex) {
+      case 0:
+        return _getHome(context);
+        break;
+      case 1:
+        return _getCommunity(context);
+        break;
+      case 2:
+        return _getFacility(context);
+        break;
+      default:
+        return _getHome(context);
+    }
+  }
+
+  void _changeSelectedIndex(int index, Facility facility){
+    setState(() {
+      _facility = facility;
+    });
+    widget.changeBottomIndex(index);
+  }
+
+  Widget _getHome(BuildContext context) {
+    return AdminDashboard(
+      changeIndex: _changeSelectedIndex,
+    );
+  }
+
+  Widget _getFacility(BuildContext context) {
+    return AddFacility(
+      facility: _facility,
+    );
+  }
+
+  Widget _getCommunity(BuildContext context) {
+    return AddCommunity();
   }
 }

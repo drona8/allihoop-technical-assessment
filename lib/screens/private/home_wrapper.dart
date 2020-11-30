@@ -1,6 +1,7 @@
+import '../../screens/private/admin_home.dart';
 import '../../styles/color.dart';
 import '../../styles/style.dart';
-import '../../widgets/avatar_widget.dart';
+import 'package:allihoop/widgets/bottom_nav_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../../models/user.dart';
 import '../../screens/private/user_home.dart';
 import '../../services/auth/auth_service.dart';
-import 'admin_home.dart';
+import '../../widgets/avatar_widget.dart';
 
 class HomeWrapper extends StatefulWidget {
   final User user;
@@ -35,7 +36,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
       appBar: _getAppBar(context),
       body: _checkRoleAndResolveBody(context),
       drawer: _getDrawer(context),
-      bottomNavigationBar: null,
+      bottomNavigationBar: _getBottomNav(context),
     );
   }
 
@@ -51,8 +52,11 @@ class _HomeWrapperState extends State<HomeWrapper> {
           ),
           onPressed: () {},
         ),
-        AvatarWidget(
-          imageURL: widget.user.imageUrl,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AvatarWidget(
+            imageURL: widget.user.imageUrl,
+          ),
         ),
         SizedBox(
           width: 15,
@@ -114,10 +118,25 @@ class _HomeWrapperState extends State<HomeWrapper> {
         ? AdminHome(
             user: widget.user,
             currentIndex: _currentIndex,
-            changeBottomIndex: null,
+            changeBottomIndex: _changeCurrentIndex,
           )
         : UserHome(
             user: widget.user,
           );
+  }
+
+  void _changeCurrentIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  Widget _getBottomNav(BuildContext context) {
+    return widget.user.type == 'admin'
+        ? BottomNavWidget(
+            rootSelectedIndex: _currentIndex,
+            setViewForIndex: _changeCurrentIndex,
+          )
+        : null;
   }
 }
