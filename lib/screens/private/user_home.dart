@@ -1,6 +1,17 @@
+import '../../models/community.dart';
+import '../../models/facility.dart';
 import '../../models/user.dart';
+import '../../services/db/community_service.dart';
+import '../../services/db/facility_service.dart';
+import '../../services/utility/form_utility.dart';
+import '../../widgets/dropdown_widget.dart';
+import '../../widgets/facility_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'facility_details.dart';
 
 class UserHome extends StatefulWidget {
   final User user;
@@ -12,17 +23,166 @@ class UserHome extends StatefulWidget {
 }
 
 class _UserHomeState extends State<UserHome> {
+  Community _selectedCommunity;
+  FacilityService facilityService;
+
+  Widget _getCommunity(BuildContext context) {
+    final CommunityService _communityService =
+        Provider.of<CommunityService>(context, listen: false);
+    return StreamBuilder(
+      stream: _communityService.getAllCommunities(),
+      builder: (context, snap) {
+        if (!snap.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        QuerySnapshot qs = snap.data;
+        List<Community> _communityList;
+        if (qs != null && qs.docs != null && qs.docs.length > 0) {
+          for (QueryDocumentSnapshot qds in qs.docs) {
+            Community _community = Community.fromMap(qds.data());
+            _community.id = qds.id;
+            if (_communityList == null) {
+              _communityList = new List<Community>();
+            }
+            _communityList.add(_community);
+          }
+        }
+
+        if (null != _communityList) {
+          return DropdownWidget(
+            menuItem: _communityList,
+            onSaved: (Community value) {
+              //_onSaved(value, 'Category');
+            },
+            onValidate: (Community value) {
+              return FormUtility.fieldValidator(value?.label, 'Community');
+            },
+            onChanged: (Community v) {
+              setState(() {
+                _selectedCommunity = v;
+              });
+            },
+            selectedMenu: _selectedCommunity,
+            hint: 'Community',
+          );
+        } else {
+          return Text('No Community');
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    
+    facilityService = Provider.of<FacilityService>(context, listen: false);
     return Center(
       child: Container(
         padding: EdgeInsets.only(
           left: 15,
           right: 15,
         ),
-        child: Text('User Home'),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                height: 100,
+                child: _getCommunity(context),
+              ),
+              _selectedCommunity != null
+                  ? Align(
+                      child: Text(
+                        'Facility:',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      alignment: Alignment.centerLeft,
+                    )
+                  : SizedBox.shrink(),
+              SizedBox(
+                height: 20,
+              ),
+              _selectedCommunity != null
+                  ? _getFacilityStream(context, false)
+                  : Text(
+                      'Select Community',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                height: 50,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _getFacilityStream(BuildContext context, bool flag) {
+    return StreamBuilder(
+      stream: facilityService.getAllFacility(_selectedCommunity, !flag),
+      builder: (context, snapshot) {
+        print('sdvgsdh ' + flag.toString());
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        QuerySnapshot qs = snapshot.data;
+        if (qs != null && qs.docs != null && qs.docs.length > 0) {
+          List<Facility> _facilityList = qs.docs.map((QueryDocumentSnapshot e) {
+            Facility fac = Facility.fromMap(e.data());
+            fac.id = e.id;
+            return fac;
+          }).toList();
+          return _getFacilityCard(context, _facilityList, flag);
+        } else {
+          return Text(
+            'No Facility for community ${_selectedCommunity.label}',
+            style: Theme.of(context).textTheme.headline3,
+          );
+        }
+      },
+    );
+  }
+
+  Widget _getFacilityCard(
+      BuildContext context, List<Facility> facilityList, bool flag) {
+    return Container(
+      height: 250.0,
+      width: MediaQuery.of(context).size.width,
+      child: ListView.builder(
+        itemCount: facilityList.length,
+        scrollDirection: Axis.horizontal,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          return Container(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FacilityDetails(facility: facilityList.elementAt(index),)),
+                );
+              },
+              child: FacilityCard(
+                facility: facilityList.elementAt(index),
+                flag: flag,
+                changeIndex: null,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

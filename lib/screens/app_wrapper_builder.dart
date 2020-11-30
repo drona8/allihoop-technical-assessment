@@ -1,3 +1,5 @@
+import '../services/db/booking_service.dart';
+
 import '../services/db/community_service.dart';
 import '../services/db/facility_service.dart';
 
@@ -39,6 +41,9 @@ class AppWrapperBuilder extends StatelessWidget {
               ),
               Provider<FacilityService>(
                 create: (_) => FacilityService(uid: user.uid),
+              ),
+              Provider<BookingService>(
+                create: (_) => BookingService(uid: user.uid),
               ),
             ],
             child: builder(context, snapshot),
