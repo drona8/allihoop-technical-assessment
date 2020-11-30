@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "234257311836",
+    "firebase_url": "https://allihoop-7a051.firebaseio.com",
+    "project_id": "allihoop-7a051",
+    "storage_bucket": "allihoop-7a051.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234257311836:android:2548bbf2b56ef42f05de99",
+        "android_client_info": {
+          "package_name": "com.startup.allihoop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234257311836-205vgm2marfock6sc1801jrj3vl90d7e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.startup.allihoop",
+            "certificate_hash": "1485205f5c63e80edd45d2acc4127e0b1ceec80b"
+          }
+        },
+        {
+          "client_id": "234257311836-knvek2g5jjqttbp4h570sem7jtlatd22.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNKnpOfGQ3WuTdfEruFBaL6B3lL-0QSCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234257311836-knvek2g5jjqttbp4h570sem7jtlatd22.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
