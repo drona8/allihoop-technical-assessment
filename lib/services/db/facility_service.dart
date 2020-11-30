@@ -18,7 +18,6 @@ class FacilityService {
   }
 
   Future<void> disabledFacility(String id, bool flag) async {
-    print('sdbf '+id+flag.toString());
     await _firestore
         .collection('facilities')
         .doc(id)
